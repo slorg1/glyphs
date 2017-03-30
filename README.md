@@ -77,9 +77,9 @@ With Glyphs:
     from glyphs.ro.ROGlyph import ROGlyph
     from glyphs.utils.DictUtils import DictUtils
 
-    issues_glyph = ROGlyph('issues', r_translation_function=list,)
+    issues_glyph = ROGlyph('issues', r_translation_function=list,r_default_value=tuple())
     name_glyph = ROGlyph('fields>status>name', r_translation_function=unicode,)
-    cat_id_glyph = ROGlyph('fields>statusCategory>id', r_translation_function=int,)
+    cat_id_glyph = ROGlyph('fields>statusCategory>id', r_translation_function=int,r_default_value=-1)
 
     issues = DictUtils.get(my_json_dict, issues_glyph)
     
@@ -89,7 +89,7 @@ With Glyphs:
 ```
 Similar code with a twist:
 1. we know that what we got is precisely what we wanted.
-2. more simple errors and missing data are automatically handled for us
+2. more simple errors and missing data are automatically handled for us (with tasteful defaults)
 3. it also supports `functools.partial` if we want to make our code shorter
 4. the glyphs are infinitely shareable!! reuse and abuse!
 5. we can swap `DictUtils` with a different util (any that you want) if the type of `my_json_dict` changes
