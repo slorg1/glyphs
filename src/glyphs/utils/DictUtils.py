@@ -1,13 +1,12 @@
 from __future__ import unicode_literals
 
 import collections
-
-import six
-
 from glyphs.helpers.ImmutableType import ImmutableType
 from glyphs.ro.ROGlyph import ROGlyph
 from glyphs.rw.RWGlyph import RWGlyph
 from glyphs.rw.ResettableGlyph import ResettableGlyph
+
+import six
 
 
 class DictUtils(six.with_metaclass(ImmutableType)):
@@ -50,7 +49,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
 
         current_dict = source
         Container = collections.Container
-        default_return = glyph.default_return
+        default_return = glyph.r_default_value
 
         for sub_path, source_type in glyph.iter_r_path_type:
 
