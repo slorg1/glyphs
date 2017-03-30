@@ -77,9 +77,9 @@ With Glyphs:
     from glyphs.ro.ROGlyph import ROGlyph
     from glyphs.utils.DictUtils import DictUtils
 
-    issues_glyph = ROGlyph('issues', r_translation_function=list,r_default_value=tuple())
+    issues_glyph = ROGlyph('issues', r_translation_function=list, r_default_value=tuple())
     name_glyph = ROGlyph('fields>status>name', r_translation_function=unicode,)
-    cat_id_glyph = ROGlyph('fields>statusCategory>id', r_translation_function=int,r_default_value=-1)
+    cat_id_glyph = ROGlyph('fields>statusCategory>id', r_translation_function=int, r_default_value=-1)
 
     issues = DictUtils.get(my_json_dict, issues_glyph)
     
