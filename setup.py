@@ -11,7 +11,7 @@ setup(name='glyphs',
       packages=find_packages(),
       package_dir={'glyphs':'src/glyphs'},
       install_requires=[
-            "six >= 1.10.1",
+            "six >= 1.10.0",
         ],
 
      )
