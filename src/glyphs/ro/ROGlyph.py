@@ -1,9 +1,8 @@
 from __future__ import unicode_literals
 
 import collections
-import itertools
-
 from glyphs.helpers.ImmutableObject import ImmutableObject
+import itertools
 
 
 class ROGlyph(ImmutableObject):
@@ -218,24 +217,14 @@ class ROGlyph(ImmutableObject):
 
         max_index = len(path_tuple) - 1
 
-
         if types is None:
-            return None
-
-        if isinstance(types, unicode):
+            types_tuple = tuple()
+        elif isinstance(types, unicode):
             types_tuple = tuple(None if x == '' else x for x in types.split(ROGlyph.NAME_SPACE_SEPARATOR))
         else:
             assert isinstance(types, tuple)
             assert all(l is None or isinstance(l, unicode) for l in types)
             types_tuple = types
-
-        # If this glyph is created with types_tuple, but they're all None (or we got a tuple of Nones)
-        # let's revert it from the tuple back to None, to save cycles when the glyph is used
-        # for setting values. This would happen if someone gave '..' as the types_tuple
-        if all(t is None for t in types_tuple):
-            return None
-
-        assert types_tuple
 
         types_tuple = tuple(None if x is None else tuple(x.split(ROGlyph.KEY_VALUE_SEPARATOR)) for x in types_tuple)
 

@@ -15,7 +15,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
     """
 
     @staticmethod
-    def get(source, glyph, force_default_to_none=False):
+    def get(source, glyph, force_none_to_default_value=False):
         """
             Returns the value stored in the given L{source} if it has the B{full} L{path and
             types<glyphs.api.ROGlyph.ROGlyph.iter_r_path_type>} held by L{glyph}.
@@ -35,7 +35,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
 
             @type source: collections.Mapping
             @type glyph: ROGlyph
-            @param force_default_to_none: If C{True}, L{default_return} will be returned if the 'raw' value
+            @param force_none_to_default_value: If C{True}, L{default_return} will be returned if the 'raw' value
             found is C{None} (checked before translation function is applied).
 
             @raise KeyError: if any intermediary pieces of the path is not in L{source}
@@ -51,7 +51,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
         Container = collections.Container
         default_return = glyph.r_default_value
 
-        for sub_path, source_type in glyph.iter_r_path_type:
+        for _, sub_path, source_type in glyph.iter_r_path_type:
 
             if not isinstance(current_dict, Mapping):
                 raise KeyError('Could not find {} in the given dictionary'.format(sub_path))
@@ -71,7 +71,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
 
         if (
             current_dict == default_return # type could be different in the case of string vs unicode.
-            or (force_default_to_none and current_dict is None)
+            or (force_none_to_default_value and current_dict is None)
             ):
             return default_return
 
