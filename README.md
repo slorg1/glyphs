@@ -58,12 +58,12 @@ How would you get the `status` & `statusCategory`'s `id` for each item of the "i
         # add a lot of code to handle exceptions
 
         for issue in issues:
-            status_name = issue['status']['name']
+            status_name = issue['fields']['status']['name']
             # add a lot of code to check if the type returns works for you
             # add a lot of code to handle exceptions
             # add a code convert the data or have the rest of your code handle unpredictable returns
 
-            status_id = issue['status']['statusCategory']['id']
+            status_id = issue['fields']['status']['statusCategory']['id']
             # add a lot of code to check if the type returns works for you
             # add a lot of code to handle exceptions
             # add a code convert the data or have the rest of your code handle unpredictable returns
