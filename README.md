@@ -54,7 +54,7 @@ How would you get the `status` & `statusCategory`'s `id` for each item of the "i
     issues = my_json_dict['issues']
     
     if issues:
-        # add a lot of code to check if the type returns works for you
+        # add a lot of code to check if the type returns worked for you
         # add a lot of code to handle exceptions
 
         for issue in issues:
@@ -89,7 +89,7 @@ With Glyphs:
 ```
 Similar code with a twist:
 1. we know that what we got is precisely what we wanted.
-2. more simple errors and missing data are automatically handled for us (with tasteful defaults)
+2. simpler errors and missing data are automatically handled for us (with tasteful defaults)
 3. it also supports `functools.partial` if we want to make our code shorter
 4. the glyphs are infinitely shareable!! reuse and abuse!
 5. we can swap `DictUtils` with a different util (any that you want) if the type of `my_json_dict` changes
