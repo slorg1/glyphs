@@ -145,7 +145,7 @@ class ROGlyph(ImmutableObject):
             - if the path is a unicode, uses L{a name space separator<glyphs.api.ROGlyph.ROGlyph.NAME_SPACE_SEPARATOR>}
             between the various level of keys.
             - if the path is a collection, each level is a unicode in the collection.
-            @type path: unicode or collections.Sequence
+            @type path: six.text_type or collections.Sequence
             @param types: (Optional) A string describing the type of data expected to be found in the
             source data. For each matching level in L{path} (sub path), a key-value pair may be specified, not
             all levels are required to have a type defined.
