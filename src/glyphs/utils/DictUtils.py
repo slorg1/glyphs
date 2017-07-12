@@ -60,8 +60,8 @@ class DictUtils(six.with_metaclass(ImmutableType)):
                 key = source_type[0]
 
                 if (key not in current_dict
-                    or isinstance(current_dict[key], Container) # saving the serialization cost as it is not going to work
-                    or source_type[1] != unicode(current_dict[key])):
+                    or isinstance(current_dict[key], Container)  # saving the serialization cost as it is not going to work
+                    or source_type[1] != six.text_type(current_dict[key])):
                     raise TypeError('Type mismatch for {} in the given dictionary'.format(sub_path))
             else:
                 assert source_type is None
@@ -70,7 +70,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
             current_dict = current_dict[sub_path] if sub_path in current_dict else default_return
 
         if (
-            current_dict == default_return # type could be different in the case of string vs unicode.
+            current_dict == default_return  # type could be different in the case of string vs unicode.
             or (force_none_to_default_value and current_dict is None)
             ):
             return default_return
@@ -111,8 +111,8 @@ class DictUtils(six.with_metaclass(ImmutableType)):
 
                 if (
                     key not in current_dict
-                    or isinstance(current_dict[key], Container) # saving the serialization cost as it is not going to work
-                    or source_type[1] != unicode(current_dict[key])
+                    or isinstance(current_dict[key], Container)  # saving the serialization cost as it is not going to work
+                    or source_type[1] != six.text_type(current_dict[key])
                     ):
                     return False
             else:

@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import six
 
 
 class StringUtils(object):
@@ -13,8 +14,8 @@ class StringUtils(object):
             returns C{None}.
 
             @postcondition: (value is None) == (return is None)
-            @postcondition: return is None or isinstance(return, unicode)
+            @postcondition: return is None or isinstance(return, six.text_type)
         """
-        return value if value is None else unicode(value)
+        return value if value is None else six.text_type(value)
 
     __slots__ = tuple()
