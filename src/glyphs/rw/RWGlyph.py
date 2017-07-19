@@ -9,7 +9,7 @@ class RWGlyph(ROGlyph):
         Read/write glyph is designed to read data from an object and write data back.
     """
 
-    def __init__(self, r_path, w_path, r_types=None, w_types=None,
+    def __init__(self, r_path, w_path=None, r_types=None, w_types=None,
                  r_translation_function=None,
                  w_translation_function=StringUtils.to_unicode,
                  r_default_value=None,
@@ -23,6 +23,7 @@ class RWGlyph(ROGlyph):
             - if the path is a unicode, use L{a name space separator<glyphs.api.ROGlyph.ROGlyph.NAME_SPACE_SEPARATOR>}
             between the various level of keys.
             - if the path is a collection, each level is a unicode in the collection.
+            - if C{None}, it will use the L{r_path}
             @type w_path: six.text_type or collections.Sequence
             @param w_types: (Optional) A string describing the type of data expected to be found once the data
             is written. For each matching level in L{w_path}, a key-value pair may be specified, not all
@@ -45,8 +46,8 @@ class RWGlyph(ROGlyph):
             @param w_allow_none: C{True} if the object supports a C{None} value (when written into). Otherwise,
             C{False}.
 
-            @precondition: isinstance(w_path, six.text_type) or all(isinstance(u, six.text_type) for u in w_path)
-            @precondition: len(w_path) > 0
+            @precondition: w_path is None or isinstance(w_path, six.text_type) or all(isinstance(u, six.text_type) for u in w_path)
+            @precondition: w_path is None or len(w_path) > 0
             @precondition: w_types is None or isinstance(w_types, (six.text_type, tuple))
             @precondition: w_types is None or len(w_types) > 0
             @precondition: w_types is None or isinstance(w_types, tuple) or (
@@ -76,7 +77,8 @@ class RWGlyph(ROGlyph):
                                       )
 
         self.__dict__["__w_translation_function"] = w_translation_function
-        self.__dict__["__w_path_type"] = self._generate_path_type_paired_sequence(w_path, w_types,)
+        w_path_ = w_path if w_path is not None else r_path
+        self.__dict__["__w_path_type"] = self._generate_path_type_paired_sequence(w_path_, w_types,)
         self.__dict__["__w_allow_none"] = w_allow_none
 
     @property

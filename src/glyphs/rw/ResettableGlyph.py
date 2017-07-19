@@ -12,7 +12,7 @@ class ResettableGlyph(RWGlyph):
     """
 
     def __init__(self, reset_w_path, reset_value,
-                 r_path, w_path, r_types=None,
+                 r_path, w_path=None, r_types=None,
                  w_types=None,
                  reset_w_type=None,
                  r_translation_function=None,
