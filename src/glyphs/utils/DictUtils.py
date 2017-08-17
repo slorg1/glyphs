@@ -173,7 +173,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
             Sets the given L{value} in the L{destination} using L{target_source_names}.
 
             It recursively builds the sub dictionaries if the number of source names is greater than
-            one. Each name is then used as L{depth} in the L{destination}. When on the last element
+            one. Each name is then used as depth in the L{destination}. When on the last element
             of L{target_source_names} the key and value from L{root_type_key_values} is set and the
             method returns.
 
@@ -181,7 +181,6 @@ class DictUtils(six.with_metaclass(ImmutableType)):
             @param root_type_key_values: Describes the key and value, or lack thereof, of all levels.
             @type root_type_key_values: tuple
             @type target_source_names: tuple
-            @type depth: int
 
             @precondition: next(w_path_type, None,) is not None
         """
