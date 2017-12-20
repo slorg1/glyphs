@@ -13,8 +13,8 @@ class BooleanUtils(object):
     TRUE_VALUES = frozenset(('true', 't',))
     """ Set of values considered to be C{True}."""
 
-    @lru_cache(typed=True)
     @staticmethod
+    @lru_cache(typed=True)
     def to_boolean(value):
         """
             Returns the boolean (from the L{true values<BooleanUtils.TRUE_VALUES>}) representation of the
