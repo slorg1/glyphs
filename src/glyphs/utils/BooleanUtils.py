@@ -10,7 +10,7 @@ class BooleanUtils(object):
         Utility class for handling booleans.
     """
 
-    TRUE_VALUES = frozenset(('true',))
+    TRUE_VALUES = frozenset(('true', 't',))
     """ Set of values considered to be C{True}."""
 
     @lru_cache(typed=True)
@@ -23,6 +23,6 @@ class BooleanUtils(object):
             @postcondition: (value is None) == (return is None)
             @postcondition: return is None or isinstance(return, bool)
         """
-        return value if value is None else StringUtils.to_unicode(value) == BooleanUtils.TRUE_VALUES
+        return (value if value is None else StringUtils.to_unicode(value)) in BooleanUtils.TRUE_VALUES
 
     __slots__ = tuple()
