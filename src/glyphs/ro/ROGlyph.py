@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import collections
 from glyphs.helpers.ImmutableObject import ImmutableObject
-import itertools
 import six
 
 
@@ -240,9 +239,9 @@ class ROGlyph(ImmutableObject):
         return tuple(
                       (idx == max_index, sub_path, type_name,)
                       for idx, (sub_path, type_name,) in enumerate(
-                                                                  itertools.izip(
+                                                                  six.moves.zip(
                                                                                  path_tuple,
                                                                                  types_tuple,
-                                                                                 )
-                                                                   )
+                                                                               )
+                                                                  )
                       )
