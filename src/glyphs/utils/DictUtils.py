@@ -195,25 +195,25 @@ class DictUtils(six.with_metaclass(ImmutableType)):
                 sub_dict = {}
                 destination[sub_path] = sub_dict
                 if type_tuple is not None:
-                    key, value, = type_tuple
+                    key, type_value, = type_tuple
 
                     if key not in destination:
-                        destination[key] = value
+                        destination[key] = type_value
                     else:
                         # dev check
-                        assert destination[key] == value
+                        assert destination[key] == type_value
 
             DictUtils.__set(sub_dict, w_path_type, value,)
             return
 
         if type_tuple is not None:
-            key, value, = type_tuple
+            key, type_value, = type_tuple
 
             if key not in destination:
-                destination[key] = value
+                destination[key] = type_value
             else:
                 # dev check
-                assert destination[key] == value
+                assert destination[key] == type_value
 
         destination[sub_path] = value
 
