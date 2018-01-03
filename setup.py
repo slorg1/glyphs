@@ -5,7 +5,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(name='glyphs',
-      version='0.1.4',
+      version='0.1.5',
       description='Swiss army knife of data extraction',
       author='slorg1',
       url='https://github.com/slorg1/glyphs',
