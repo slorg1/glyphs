@@ -76,7 +76,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
             return default_return
 
         t = glyph.r_translation_function
-        if t and current_dict is not None:
+        if t:
             current_dict = t(current_dict)
 
             if (
