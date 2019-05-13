@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import six
-from builtins import None
 
 
 class StringUtils(object):

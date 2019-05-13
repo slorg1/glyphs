@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setup(
         name='glyphs',
-        version='0.1.1',
+        version='0.1.2',
         description='Swiss army knife of data extraction',
         long_description=long_description,
         long_description_content_type="text/markdown",
@@ -17,6 +17,7 @@ setup(
         url='https://github.com/slorg1/glyphs',
         packages=[
                   'glyphs',
+                  'glyphs.backports',
                   'glyphs.helpers',
                   'glyphs.ro',
                   'glyphs.rw',
