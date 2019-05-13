@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setup(
         name='glyphs',
-        version='0.1',
+        version='0.1.1',
         description='Swiss army knife of data extraction',
         long_description=long_description,
         long_description_content_type="text/markdown",
