@@ -9,7 +9,7 @@ class RWGlyph(ROGlyph):
         Read/write glyph is designed to read data from an object and write data back.
     """
 
-    def __init__(self, r_path, w_path, r_types=None, w_types=None,
+    def __init__(self, r_path, w_path=None, r_types=None, w_types=None,
                  r_translation_function=None,
                  w_translation_function=StringUtils.to_unicode,
                  r_default_value=None,
@@ -23,7 +23,8 @@ class RWGlyph(ROGlyph):
             - if the path is a unicode, use L{a name space separator<glyphs.api.ROGlyph.ROGlyph.NAME_SPACE_SEPARATOR>}
             between the various level of keys.
             - if the path is a collection, each level is a unicode in the collection.
-            @type w_path: unicode or collections.Sequence
+            - if C{None}, it will use the L{r_path}
+            @type w_path: six.text_type or collections.abc.Sequence
             @param w_types: (Optional) A string describing the type of data expected to be found once the data
             is written. For each matching level in L{w_path}, a key-value pair may be specified, not all
             levels are required to have a type defined.
@@ -45,20 +46,20 @@ class RWGlyph(ROGlyph):
             @param w_allow_none: C{True} if the object supports a C{None} value (when written into). Otherwise,
             C{False}.
 
-            @precondition: isinstance(w_path, unicode) or all(isinstance(u, unicode) for u in w_path)
-            @precondition: len(w_path) > 0
-            @precondition: w_types is None or isinstance(w_types, (unicode, tuple))
+            @precondition: w_path is None or isinstance(w_path, six.text_type) or all(isinstance(u, six.text_type) for u in w_path)
+            @precondition: w_path is None or len(w_path) > 0
+            @precondition: w_types is None or isinstance(w_types, (six.text_type, tuple))
             @precondition: w_types is None or len(w_types) > 0
             @precondition: w_types is None or isinstance(w_types, tuple) or (
                                                                                      (
-                                                                                     isinstance(w_path, unicode)
+                                                                                     isinstance(w_path, six.text_type)
                                                                                      and w_types.count(ROGlyph.NAME_SPACE_SEPARATOR) <= w_path.count(ROGlyph.NAME_SPACE_SEPARATOR)
                                                                                      )
                                                                                      or w_types.count(ROGlyph.NAME_SPACE_SEPARATOR) <= len(w_path)
                                                                                      )
-            @precondition: w_types is None or isinstance(w_types, unicode) or (
+            @precondition: w_types is None or isinstance(w_types, six.text_type) or (
                                                                                      (
-                                                                                     isinstance(w_path, unicode)
+                                                                                     isinstance(w_path, six.text_type)
                                                                                      and len(w_types) <= w_path.count(ROGlyph.NAME_SPACE_SEPARATOR)
                                                                                      )
                                                                                      or len(w_types) <= len(w_path)
@@ -76,7 +77,8 @@ class RWGlyph(ROGlyph):
                                       )
 
         self.__dict__["__w_translation_function"] = w_translation_function
-        self.__dict__["__w_path_type"] = self._generate_path_type_paired_sequence(w_path, w_types,)
+        w_path_ = w_path if w_path is not None else r_path
+        self.__dict__["__w_path_type"] = self._generate_path_type_paired_sequence(w_path_, w_types,)
         self.__dict__["__w_allow_none"] = w_allow_none
 
     @property
@@ -87,7 +89,7 @@ class RWGlyph(ROGlyph):
 
             The iterator makes up a typed path to write data into an object.
 
-            @rtype: collections.Iterable
+            @rtype: collections.abc.Iterable
 
             @postcondition: next(return, None) is not None
             @postcondition: all(
@@ -95,7 +97,7 @@ class RWGlyph(ROGlyph):
                                     isinstance(x, tuple)
                                     and len(x) == 3
                                     and isinstance(x[0], bool)
-                                    and isinstance(x[1], unicode) and len(x[1]) > 0
+                                    and isinstance(x[1], six.text_type) and len(x[1]) > 0
                                     and (
                                         x[2] is None
                                         or (

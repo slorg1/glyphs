@@ -1,12 +1,16 @@
 from __future__ import unicode_literals
 
-import collections
 from glyphs.helpers.ImmutableType import ImmutableType
 from glyphs.ro.ROGlyph import ROGlyph
 from glyphs.rw.RWGlyph import RWGlyph
 from glyphs.rw.ResettableGlyph import ResettableGlyph
 
 import six
+
+try:  # transition with Python 3.6+
+    import collections.abc as collectionsABC
+except ImportError:
+    import collections as collectionsABC
 
 
 class DictUtils(six.with_metaclass(ImmutableType)):
@@ -15,7 +19,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
     """
 
     @staticmethod
-    def get(source, glyph, force_default_to_none=False):
+    def get(source, glyph, no_default=False, force_none_to_default_value=False):
         """
             Returns the value stored in the given L{source} if it has the B{full} L{path and
             types<glyphs.api.ROGlyph.ROGlyph.iter_r_path_type>} held by L{glyph}.
@@ -33,25 +37,29 @@ class DictUtils(six.with_metaclass(ImmutableType)):
             If a call to L{DictUtils.in_} with the same L{source} and L{glyph} returns C{True}, this method
             will not throw an error and return a value (defaulted or translated)
 
-            @type source: collections.Mapping
+            @type source: collections.abc.Mapping
             @type glyph: ROGlyph
-            @param force_default_to_none: If C{True}, L{default_return} will be returned if the 'raw' value
+            @param no_default: C{True} if all levels of the glyph are required (do not use the default
+            value). If C{False} (default behaviour), the glyph's default value will be used if the last piece
+            of the path is not in L{source}
+            @type no_default: bool
+            @param force_none_to_default_value: If C{True}, L{default_return} will be returned if the 'raw' value
             found is C{None} (checked before translation function is applied).
 
             @raise KeyError: if any intermediary pieces of the path is not in L{source}
             @raise TypeError: if any intermediary pieces of the path does not match the expected type found in L{source}
         """
-        Mapping = collections.Mapping
+        Mapping = collectionsABC.Mapping
         assert isinstance(source, Mapping)
         assert isinstance(glyph, ROGlyph)
 
         # other preconditions tested below
 
         current_dict = source
-        Container = collections.Container
+        Container = collectionsABC.Container
         default_return = glyph.r_default_value
 
-        for sub_path, source_type in glyph.iter_r_path_type:
+        for _, sub_path, source_type in glyph.iter_r_path_type:
 
             if not isinstance(current_dict, Mapping):
                 raise KeyError('Could not find {} in the given dictionary'.format(sub_path))
@@ -60,24 +68,35 @@ class DictUtils(six.with_metaclass(ImmutableType)):
                 key = source_type[0]
 
                 if (key not in current_dict
-                    or isinstance(current_dict[key], Container) # saving the serialization cost as it is not going to work
-                    or source_type[1] != unicode(current_dict[key])):
+                    or isinstance(current_dict[key], Container)  # saving the serialization cost as it is not going to work
+                    or source_type[1] != six.text_type(current_dict[key])):
                     raise TypeError('Type mismatch for {} in the given dictionary'.format(sub_path))
             else:
                 assert source_type is None
 
             # Cannot be current_dict.get() because not all collections.Mapping have get().
-            current_dict = current_dict[sub_path] if sub_path in current_dict else default_return
+            if sub_path in current_dict:
+                current_dict = current_dict[sub_path]
+            elif no_default is True:
+                raise KeyError('Could not find {} in the given dictionary'.format(sub_path))
+            else:
+                current_dict = default_return
 
         if (
-            current_dict == default_return # type could be different in the case of string vs unicode.
-            or (force_default_to_none and current_dict is None)
+            current_dict == default_return  # type could be different in the case of string vs unicode.
+            or (force_none_to_default_value and current_dict is None)
             ):
             return default_return
 
         t = glyph.r_translation_function
-        if t and current_dict is not None:
-            return t(current_dict)
+        if t:
+            current_dict = t(current_dict)
+
+            if (
+                current_dict == default_return  # type could be different in the case of string vs unicode.
+                or (force_none_to_default_value and current_dict is None)
+                ):
+                return default_return
 
         return current_dict
 
@@ -87,19 +106,19 @@ class DictUtils(six.with_metaclass(ImmutableType)):
             Returns  C{True} if the given L{source} has the B{full} L{path and types<glyphs.api.ROGlyph.
             ROGlyph.iter_r_path_type>} held by L{glyph}. Otherwise, returns C{False}.
 
-            @type source: collections.Mapping
+            @type source: collections.abc.Mapping
             @type glyph: ROGlyph
 
             @rtype: BooleanType
         """
-        Mapping = collections.Mapping
+        Mapping = collectionsABC.Mapping
         assert isinstance(source, Mapping)
 
         assert isinstance(glyph, ROGlyph)
         # other preconditions tested below
 
         current_dict = source
-        Container = collections.Container
+        Container = collectionsABC.Container
         iter_r_path_type = glyph.iter_r_path_type
         is_last = False
 
@@ -111,8 +130,8 @@ class DictUtils(six.with_metaclass(ImmutableType)):
 
                 if (
                     key not in current_dict
-                    or isinstance(current_dict[key], Container) # saving the serialization cost as it is not going to work
-                    or source_type[1] != unicode(current_dict[key])
+                    or isinstance(current_dict[key], Container)  # saving the serialization cost as it is not going to work
+                    or source_type[1] != six.text_type(current_dict[key])
                     ):
                     return False
             else:
@@ -136,7 +155,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
 
             If the L{value} or the translated value is C{None} then this method is a NOOP.
 
-            @type destination: collections.MutableMapping
+            @type destination: collections.abc.MutableMapping
             @type glyph: APIGlyph
 
         """
@@ -157,7 +176,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
             .AbstractResettableGlyph.AbstractResettableGlyph.reset_target_source_names>} and
             the L{target type names<utils.api.APIGlyph.APIGlyph.target_type_names>}.
 
-            @type destination: collections.MutableMapping
+            @type destination: collections.abc.MutableMapping
             @type glyph: AbstractResettableGlyph
         """
         assert isinstance(glyph, ResettableGlyph)
@@ -173,19 +192,18 @@ class DictUtils(six.with_metaclass(ImmutableType)):
             Sets the given L{value} in the L{destination} using L{target_source_names}.
 
             It recursively builds the sub dictionaries if the number of source names is greater than
-            one. Each name is then used as L{depth} in the L{destination}. When on the last element
+            one. Each name is then used as depth in the L{destination}. When on the last element
             of L{target_source_names} the key and value from L{root_type_key_values} is set and the
             method returns.
 
-            @type destination: collections.MutableMapping
+            @type destination: collections.abc.MutableMapping
             @param root_type_key_values: Describes the key and value, or lack thereof, of all levels.
             @type root_type_key_values: tuple
             @type target_source_names: tuple
-            @type depth: int
 
             @precondition: next(w_path_type, None,) is not None
         """
-        assert isinstance(destination, collections.MutableMapping), type(destination)
+        assert isinstance(destination, collectionsABC.MutableMapping), type(destination)
         # other preconditions tested below
 
         is_last, sub_path, type_tuple, = next(w_path_type,)
@@ -196,25 +214,25 @@ class DictUtils(six.with_metaclass(ImmutableType)):
                 sub_dict = {}
                 destination[sub_path] = sub_dict
                 if type_tuple is not None:
-                    key, value, = type_tuple
+                    key, type_value, = type_tuple
 
                     if key not in destination:
-                        destination[key] = value
+                        destination[key] = type_value
                     else:
                         # dev check
-                        assert destination[key] == value
+                        assert destination[key] == type_value
 
             DictUtils.__set(sub_dict, w_path_type, value,)
             return
 
         if type_tuple is not None:
-            key, value, = type_tuple
+            key, type_value, = type_tuple
 
             if key not in destination:
-                destination[key] = value
+                destination[key] = type_value
             else:
                 # dev check
-                assert destination[key] == value
+                assert destination[key] == type_value
 
         destination[sub_path] = value
 

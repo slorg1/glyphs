@@ -12,7 +12,7 @@ class ResettableGlyph(RWGlyph):
     """
 
     def __init__(self, reset_w_path, reset_value,
-                 r_path, w_path, r_types=None,
+                 r_path, w_path=None, r_types=None,
                  w_types=None,
                  reset_w_type=None,
                  r_translation_function=None,
@@ -29,7 +29,7 @@ class ResettableGlyph(RWGlyph):
             - if the path is a unicode, use L{a name space separator<glyphs.api.ROGlyph.ROGlyph.NAME_SPACE_SEPARATOR>}
             between the various level of keys.
             - if the path is a collection, each level is a unicode in the collection.
-            @type reset_w_path: UnicodeType or TupleType
+            @type reset_w_path: six.text_type or tuple
             @param reset_w_type: (Optional) A string describing the type of data expected to be found once the data
             is written. For each matching level in L{reset_w_path}, a key-value pair may be specified, not all
             levels are required to have a type defined.
@@ -48,20 +48,20 @@ class ResettableGlyph(RWGlyph):
 
             @param reset_value: The reset value
 
-            @precondition: isinstance(reset_w_path, unicode) or all(isinstance(u, unicode) for u in reset_w_path)
+            @precondition: isinstance(reset_w_path, six.text_type) or all(isinstance(u, six.text_type) for u in reset_w_path)
             @precondition: len(reset_w_path) > 0
-            @precondition: reset_w_type is None or isinstance(reset_w_type, (unicode, tuple))
+            @precondition: reset_w_type is None or isinstance(reset_w_type, (six.text_type, tuple))
             @precondition: reset_w_type is None or len(reset_w_type) > 0
             @precondition: reset_w_type is None or isinstance(reset_w_type, tuple) or (
                                                                                      (
-                                                                                     isinstance(reset_w_path, unicode)
+                                                                                     isinstance(reset_w_path, six.text_type)
                                                                                      and reset_w_type.count(ROGlyph.NAME_SPACE_SEPARATOR) <= reset_w_path.count(ROGlyph.NAME_SPACE_SEPARATOR)
                                                                                      )
                                                                                      or reset_w_type.count(ROGlyph.NAME_SPACE_SEPARATOR) <= len(reset_w_path)
                                                                                      )
-            @precondition: reset_w_type is None or isinstance(reset_w_type, unicode) or (
+            @precondition: reset_w_type is None or isinstance(reset_w_type, six.text_type) or (
                                                                                      (
-                                                                                     isinstance(reset_w_path, unicode)
+                                                                                     isinstance(reset_w_path, six.text_type)
                                                                                      and len(reset_w_type) <= reset_w_path.count(ROGlyph.NAME_SPACE_SEPARATOR)
                                                                                      )
                                                                                      or len(reset_w_type) <= len(reset_w_path)
@@ -104,7 +104,7 @@ class ResettableGlyph(RWGlyph):
                                     isinstance(x, tuple)
                                     and len(x) == 3
                                     and isinstance(x[0], bool)
-                                    and isinstance(x[1], unicode) and len(x[1]) > 0
+                                    and isinstance(x[1], six.text_type) and len(x[1]) > 0
                                     and (
                                         x[2] is None
                                         or (

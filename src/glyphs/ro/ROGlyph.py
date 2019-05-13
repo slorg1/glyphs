@@ -1,9 +1,12 @@
 from __future__ import unicode_literals
 
-import collections
-import itertools
+try:  # transition with Python 3.6+
+    import collections.abc as collectionsABC
+except ImportError:
+    import collections as collectionsABC
 
 from glyphs.helpers.ImmutableObject import ImmutableObject
+import six
 
 
 class ROGlyph(ImmutableObject):
@@ -30,7 +33,7 @@ class ROGlyph(ImmutableObject):
             - if the path is a unicode, use L{a name space separator<glyphs.api.ROGlyph.ROGlyph.NAME_SPACE_SEPARATOR>}
             between the various level of keys.
             - if the path is a collection, each level is a unicode in the collection.
-            @type r_path: unicode or collections.Sequence
+            @type r_path: six.text_type or collections.abc.Sequence
             @param r_types: (Optional) A string describing the type of data expected to be found in the
             source data. For each matching level in L{r_path}, a key-value pair may be specified, not all
             levels are required to have a type defined.
@@ -52,20 +55,20 @@ class ROGlyph(ImmutableObject):
             @param r_default_value: value to use as a default value. To be used when no data is found at
             L{r_path}.
 
-            @precondition: isinstance(r_path, unicode) or all(isinstance(u, unicode) for u in r_path)
+            @precondition: isinstance(r_path, six.text_type) or all(isinstance(u, six.text_type) for u in r_path)
             @precondition: len(r_path) > 0
-            @precondition: r_types is None or isinstance(r_types, (unicode, tuple))
+            @precondition: r_types is None or isinstance(r_types, (six.text_type, tuple))
             @precondition: r_types is None or len(r_types) > 0
             @precondition: r_types is None or isinstance(r_types, tuple) or (
                                                                                      (
-                                                                                     isinstance(r_path, unicode)
+                                                                                     isinstance(r_path, six.text_type)
                                                                                      and r_types.count(ROGlyph.NAME_SPACE_SEPARATOR) <= r_path.count(ROGlyph.NAME_SPACE_SEPARATOR)
                                                                                      )
                                                                                      or r_types.count(ROGlyph.NAME_SPACE_SEPARATOR) <= len(r_path)
                                                                                      )
-            @precondition: r_types is None or isinstance(r_types, unicode) or (
+            @precondition: r_types is None or isinstance(r_types, six.text_type) or (
                                                                                      (
-                                                                                     isinstance(r_path, unicode)
+                                                                                     isinstance(r_path, six.text_type)
                                                                                      and len(r_types) <= r_path.count(ROGlyph.NAME_SPACE_SEPARATOR)
                                                                                      )
                                                                                      or len(r_types) <= len(r_path)
@@ -91,7 +94,7 @@ class ROGlyph(ImmutableObject):
 
             The iterator makes up a typed path to read data out of an object.
 
-            @rtype: collections.Iterable
+            @rtype: collections.abc.Iterable
 
             @postcondition: next(return, None) is not None
             @postcondition: all(
@@ -99,7 +102,7 @@ class ROGlyph(ImmutableObject):
                                     isinstance(x, tuple)
                                     and len(x) == 3
                                     and isinstance(x[0], bool)
-                                    and isinstance(x[1], unicode) and len(x[1]) > 0
+                                    and isinstance(x[1], six.text_type) and len(x[1]) > 0
                                     and (
                                         x[2] is None
                                         or (
@@ -145,7 +148,7 @@ class ROGlyph(ImmutableObject):
             - if the path is a unicode, uses L{a name space separator<glyphs.api.ROGlyph.ROGlyph.NAME_SPACE_SEPARATOR>}
             between the various level of keys.
             - if the path is a collection, each level is a unicode in the collection.
-            @type path: unicode or collections.Sequence
+            @type path: six.text_type or collections.abc.Sequence
             @param types: (Optional) A string describing the type of data expected to be found in the
             source data. For each matching level in L{path} (sub path), a key-value pair may be specified, not
             all levels are required to have a type defined.
@@ -170,18 +173,18 @@ class ROGlyph(ImmutableObject):
             types: ..xsi:Entity
             object: {'sub_path1': {'sub_path2': {'sub_path3': 1, 'xsi':'Entity' } } }
 
-            @rtype: collections.Sequence
+            @rtype: collections.abc.Sequence
 
             @precondition: types is None or isinstance(types, tuple) or (
                                                                              (
-                                                                             isinstance(path, unicode)
+                                                                             isinstance(path, six.text_type)
                                                                              and types.count(ROGlyph.NAME_SPACE_SEPARATOR) <= path.count(ROGlyph.NAME_SPACE_SEPARATOR)
                                                                              )
                                                                              or types.count(ROGlyph.NAME_SPACE_SEPARATOR) <= len(path)
                                                                         )
-            @precondition: types is None or isinstance(types, unicode) or (
+            @precondition: types is None or isinstance(types, six.text_type) or (
                                                                              (
-                                                                             isinstance(path, unicode)
+                                                                             isinstance(path, six.text_type)
                                                                              and len(types) <= path.count(ROGlyph.NAME_SPACE_SEPARATOR)
                                                                              )
                                                                              or len(types) <= len(path)
@@ -194,7 +197,7 @@ class ROGlyph(ImmutableObject):
                                         isinstance(x, tuple)
                                         and len(x) == 3
                                         and isinstance(x[0], bool)
-                                        and isinstance(x[1], unicode) and len(x[1]) > 0
+                                        and isinstance(x[1], six.text_type) and len(x[1]) > 0
                                         and (
                                             x[2] is None
                                             or (
@@ -207,35 +210,25 @@ class ROGlyph(ImmutableObject):
                                 )
         """
 
-        if isinstance(path, unicode):
+        if isinstance(path, six.text_type):
             path_tuple = tuple(path.split(ROGlyph.NAME_SPACE_SEPARATOR))
         else:
-            assert isinstance(path, collections.Sequence) # pre
+            assert isinstance(path, collectionsABC.Sequence)  # pre
             path_tuple = tuple(path)
-            assert all(isinstance(u, unicode) for u in path_tuple) # pre
+            assert all(isinstance(u, six.text_type) for u in path_tuple)  # pre
 
         assert path_tuple
 
         max_index = len(path_tuple) - 1
 
-
         if types is None:
-            return None
-
-        if isinstance(types, unicode):
+            types_tuple = tuple()
+        elif isinstance(types, six.text_type):
             types_tuple = tuple(None if x == '' else x for x in types.split(ROGlyph.NAME_SPACE_SEPARATOR))
         else:
             assert isinstance(types, tuple)
-            assert all(l is None or isinstance(l, unicode) for l in types)
+            assert all(l is None or isinstance(l, six.text_type) for l in types)
             types_tuple = types
-
-        # If this glyph is created with types_tuple, but they're all None (or we got a tuple of Nones)
-        # let's revert it from the tuple back to None, to save cycles when the glyph is used
-        # for setting values. This would happen if someone gave '..' as the types_tuple
-        if all(t is None for t in types_tuple):
-            return None
-
-        assert types_tuple
 
         types_tuple = tuple(None if x is None else tuple(x.split(ROGlyph.KEY_VALUE_SEPARATOR)) for x in types_tuple)
 
@@ -243,16 +236,16 @@ class ROGlyph(ImmutableObject):
             # pad anything that has been left unspecified.
             types_tuple += (None,) * (len(path_tuple) - len(types_tuple))
         else:
-            assert len(types_tuple) == len(path_tuple) # pre
+            assert len(types_tuple) == len(path_tuple)  # pre
 
-        assert len(types_tuple) == len(path_tuple) # dev check
+        assert len(types_tuple) == len(path_tuple)  # dev check
 
         return tuple(
                       (idx == max_index, sub_path, type_name,)
                       for idx, (sub_path, type_name,) in enumerate(
-                                                                  itertools.izip(
+                                                                  six.moves.zip(
                                                                                  path_tuple,
                                                                                  types_tuple,
-                                                                                 )
-                                                                   )
+                                                                               )
+                                                                  )
                       )
