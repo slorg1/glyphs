@@ -24,7 +24,7 @@ class RWGlyph(ROGlyph):
             between the various level of keys.
             - if the path is a collection, each level is a unicode in the collection.
             - if C{None}, it will use the L{r_path}
-            @type w_path: six.text_type or collections.Sequence
+            @type w_path: six.text_type or collections.abc.Sequence
             @param w_types: (Optional) A string describing the type of data expected to be found once the data
             is written. For each matching level in L{w_path}, a key-value pair may be specified, not all
             levels are required to have a type defined.
@@ -89,7 +89,7 @@ class RWGlyph(ROGlyph):
 
             The iterator makes up a typed path to write data into an object.
 
-            @rtype: collections.Iterable
+            @rtype: collections.abc.Iterable
 
             @postcondition: next(return, None) is not None
             @postcondition: all(

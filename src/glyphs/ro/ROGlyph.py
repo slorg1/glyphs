@@ -1,6 +1,10 @@
 from __future__ import unicode_literals
 
-import collections
+try:  # transition with Python 3.6+
+    import collections.abc as collectionsABC
+except ImportError:
+    import collections as collectionsABC
+
 from glyphs.helpers.ImmutableObject import ImmutableObject
 import six
 
@@ -29,7 +33,7 @@ class ROGlyph(ImmutableObject):
             - if the path is a unicode, use L{a name space separator<glyphs.api.ROGlyph.ROGlyph.NAME_SPACE_SEPARATOR>}
             between the various level of keys.
             - if the path is a collection, each level is a unicode in the collection.
-            @type r_path: six.text_type or collections.Sequence
+            @type r_path: six.text_type or collections.abc.Sequence
             @param r_types: (Optional) A string describing the type of data expected to be found in the
             source data. For each matching level in L{r_path}, a key-value pair may be specified, not all
             levels are required to have a type defined.
@@ -90,7 +94,7 @@ class ROGlyph(ImmutableObject):
 
             The iterator makes up a typed path to read data out of an object.
 
-            @rtype: collections.Iterable
+            @rtype: collections.abc.Iterable
 
             @postcondition: next(return, None) is not None
             @postcondition: all(
@@ -144,7 +148,7 @@ class ROGlyph(ImmutableObject):
             - if the path is a unicode, uses L{a name space separator<glyphs.api.ROGlyph.ROGlyph.NAME_SPACE_SEPARATOR>}
             between the various level of keys.
             - if the path is a collection, each level is a unicode in the collection.
-            @type path: six.text_type or collections.Sequence
+            @type path: six.text_type or collections.abc.Sequence
             @param types: (Optional) A string describing the type of data expected to be found in the
             source data. For each matching level in L{path} (sub path), a key-value pair may be specified, not
             all levels are required to have a type defined.
@@ -169,7 +173,7 @@ class ROGlyph(ImmutableObject):
             types: ..xsi:Entity
             object: {'sub_path1': {'sub_path2': {'sub_path3': 1, 'xsi':'Entity' } } }
 
-            @rtype: collections.Sequence
+            @rtype: collections.abc.Sequence
 
             @precondition: types is None or isinstance(types, tuple) or (
                                                                              (
@@ -209,7 +213,7 @@ class ROGlyph(ImmutableObject):
         if isinstance(path, six.text_type):
             path_tuple = tuple(path.split(ROGlyph.NAME_SPACE_SEPARATOR))
         else:
-            assert isinstance(path, collections.Sequence)  # pre
+            assert isinstance(path, collectionsABC.Sequence)  # pre
             path_tuple = tuple(path)
             assert all(isinstance(u, six.text_type) for u in path_tuple)  # pre
 
