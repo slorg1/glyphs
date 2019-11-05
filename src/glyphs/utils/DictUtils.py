@@ -68,7 +68,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
                 key = source_type[0]
 
                 if (key not in current_dict
-                    or isinstance(current_dict[key], Container)  # saving the serialization cost as it is not going to work
+                    or not isinstance(current_dict[key], Container)  # saving the serialization cost as it is not going to work
                     or source_type[1] != six.text_type(current_dict[key])):
                     raise TypeError('Type mismatch for {} in the given dictionary'.format(sub_path))
             else:
@@ -130,7 +130,7 @@ class DictUtils(six.with_metaclass(ImmutableType)):
 
                 if (
                     key not in current_dict
-                    or isinstance(current_dict[key], Container)  # saving the serialization cost as it is not going to work
+                    or not isinstance(current_dict[key], Container)  # saving the serialization cost as it is not going to work
                     or source_type[1] != six.text_type(current_dict[key])
                     ):
                     return False
