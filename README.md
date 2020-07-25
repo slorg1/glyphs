@@ -1,4 +1,10 @@
 # glyphs
+[![PyPI version](https://badge.fury.io/py/glyphs.svg)](https://badge.fury.io/py/glyphs)
+## Install
+
+```bash
+pip install glyphs
+```
 
 ## Examples
 Sample response JSON from an API call looks as follows. Let's assume for the example that we keep a reference to that dictionary.
